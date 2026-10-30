@@ -1,0 +1,21 @@
+.history {
+  mat-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__clear {
+    margin-left: auto;
+  }
+
+  &__empty {
+    opacity: 0.7;
+    font-size: 0.9rem;
+    margin: 8px 0;
+  }
+
+  mat-list-item {
+    cursor: pointer;
+  }
+}

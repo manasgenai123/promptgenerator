@@ -1,0 +1,18 @@
+.input {
+  &__field {
+    width: 100%;
+  }
+
+  mat-card-actions {
+    gap: 8px;
+  }
+
+  mat-progress-spinner {
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  button span {
+    vertical-align: middle;
+  }
+}

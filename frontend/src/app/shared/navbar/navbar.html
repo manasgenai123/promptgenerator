@@ -1,0 +1,18 @@
+<mat-toolbar color="primary" class="navbar">
+  <span class="navbar__brand">
+    <mat-icon>auto_fix_high</mat-icon>
+    <span class="navbar__title">Prompt Optimizer</span>
+  </span>
+
+  <span class="navbar__spacer"></span>
+
+  <button
+    mat-icon-button
+    type="button"
+    [matTooltip]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+    (click)="themeService.toggle()"
+    aria-label="Toggle dark mode"
+  >
+    <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+</mat-toolbar>

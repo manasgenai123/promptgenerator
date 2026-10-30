@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="PromptOptimizer.Api/PromptOptimizer.Api.csproj" />
+  <Project Path="PromptOptimizer.Application/PromptOptimizer.Application.csproj" />
+  <Project Path="PromptOptimizer.Domain/PromptOptimizer.Domain.csproj" />
+  <Project Path="PromptOptimizer.Infrastructure/PromptOptimizer.Infrastructure.csproj" />
+</Solution>

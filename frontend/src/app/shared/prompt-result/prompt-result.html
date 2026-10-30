@@ -1,0 +1,87 @@
+<mat-card class="result" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Optimization Result</mat-card-title>
+    <mat-card-subtitle>Style: {{ result().optimizationType }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="result__metrics">
+      <div class="metric">
+        <span class="metric__label">Quality Score</span>
+        <div class="metric__score">
+          <mat-progress-bar
+            mode="determinate"
+            [color]="scoreColor()"
+            [value]="result().qualityScore"
+          ></mat-progress-bar>
+          <span class="metric__value">{{ result().qualityScore }}/100</span>
+        </div>
+      </div>
+
+      <div class="metric metric--inline">
+        <mat-icon>token</mat-icon>
+        <span>{{ result().originalTokenEstimate }} → {{ result().optimizedTokenEstimate }} tokens</span>
+      </div>
+
+      <div class="metric metric--inline" [class.metric--positive]="tokensSaved() > 0">
+        <mat-icon>savings</mat-icon>
+        <span>{{ tokensSaved() }} tokens saved</span>
+      </div>
+    </div>
+
+    <div class="result__columns">
+      <section class="panel">
+        <header class="panel__header">
+          <h3>Original Prompt</h3>
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Copy original"
+            (click)="copy(result().originalPrompt)"
+            aria-label="Copy original prompt"
+          >
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </header>
+        <pre class="panel__text">{{ result().originalPrompt }}</pre>
+      </section>
+
+      <section class="panel panel--optimized">
+        <header class="panel__header">
+          <h3>Optimized Prompt</h3>
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Copy optimized"
+            (click)="copy(result().optimizedPrompt)"
+            aria-label="Copy optimized prompt"
+          >
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </header>
+        <pre class="panel__text">{{ result().optimizedPrompt }}</pre>
+      </section>
+    </div>
+
+    @if (result().improvements.length) {
+      <section class="result__improvements">
+        <h3>Improvement Summary</h3>
+        <mat-chip-set>
+          @for (improvement of result().improvements; track improvement) {
+            <mat-chip>
+              <mat-icon matChipAvatar>check_circle</mat-icon>
+              {{ improvement }}
+            </mat-chip>
+          }
+        </mat-chip-set>
+      </section>
+    }
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-flat-button color="primary" type="button" (click)="copy(result().optimizedPrompt)">
+      <mat-icon>content_copy</mat-icon>
+      Copy Optimized Prompt
+    </button>
+  </mat-card-actions>
+</mat-card>

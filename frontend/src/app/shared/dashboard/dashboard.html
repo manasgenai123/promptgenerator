@@ -1,0 +1,47 @@
+<mat-card class="dashboard" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Statistics</mat-card-title>
+    <button
+      mat-icon-button
+      type="button"
+      class="dashboard__refresh"
+      (click)="refresh()"
+      aria-label="Refresh statistics"
+    >
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (stats(); as s) {
+      <div class="dashboard__tiles">
+        <div class="tile">
+          <span class="tile__value">{{ s.totalOptimizations }}</span>
+          <span class="tile__label">Total optimizations</span>
+        </div>
+        <div class="tile">
+          <span class="tile__value">{{ s.averageQualityScore }}</span>
+          <span class="tile__label">Avg. quality score</span>
+        </div>
+        <div class="tile">
+          <span class="tile__value">{{ s.totalTokensSaved }}</span>
+          <span class="tile__label">Tokens saved</span>
+        </div>
+      </div>
+
+      @if (s.totalOptimizations > 0) {
+        <div class="dashboard__breakdown">
+          <h4>By style</h4>
+          @for (entry of s.optimizationsByType | keyvalue; track entry.key) {
+            <div class="breakdown-row">
+              <span>{{ entry.key }}</span>
+              <span class="breakdown-row__count">{{ entry.value }}</span>
+            </div>
+          }
+        </div>
+      }
+    } @else {
+      <p class="dashboard__empty">No statistics available.</p>
+    }
+  </mat-card-content>
+</mat-card>

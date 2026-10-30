@@ -1,0 +1,16 @@
+<app-navbar></app-navbar>
+
+<main class="layout">
+  <section class="layout__main">
+    <app-prompt-input [loading]="loading()" (optimize)="optimize($event)"></app-prompt-input>
+
+    @if (result(); as r) {
+      <app-prompt-result [result]="r"></app-prompt-result>
+    }
+  </section>
+
+  <aside class="layout__side">
+    <app-dashboard></app-dashboard>
+    <app-prompt-history (select)="showHistoryItem($event)"></app-prompt-history>
+  </aside>
+</main>
