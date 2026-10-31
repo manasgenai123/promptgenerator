@@ -32,6 +32,16 @@ export class PromptResult {
     return Math.max(0, r.originalTokenEstimate - r.optimizedTokenEstimate);
   });
 
+  protected readonly tokensSavedPercent = computed(() => {
+    const r = this.result();
+    if (r.originalTokenEstimate <= 0) return 0;
+    return Math.round((this.tokensSaved() / r.originalTokenEstimate) * 100);
+  });
+
+  protected readonly usageIsActual = computed(
+    () => this.result().tokenUsageSource === 'Api',
+  );
+
   protected readonly scoreColor = computed(() => {
     const score = this.result().qualityScore;
     if (score >= 75) return 'primary';

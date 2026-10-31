@@ -83,7 +83,24 @@ public class OpenAIService : IOpenAIService
             throw new InvalidOperationException("The AI provider returned an empty response.");
         }
 
-        return ParseModelContent(content);
+        var result = ParseModelContent(content);
+        result.Usage = MapUsage(completion?.Usage);
+        return result;
+    }
+
+    private static TokenUsage? MapUsage(Usage? usage)
+    {
+        if (usage is null)
+        {
+            return null;
+        }
+
+        return new TokenUsage
+        {
+            PromptTokens = usage.PromptTokens,
+            CompletionTokens = usage.CompletionTokens,
+            TotalTokens = usage.TotalTokens
+        };
     }
 
     private (string RequestUri, object Payload) BuildRequest(string systemPrompt, string userPrompt)
@@ -177,6 +194,21 @@ public class OpenAIService : IOpenAIService
     {
         [JsonPropertyName("choices")]
         public List<Choice>? Choices { get; set; }
+
+        [JsonPropertyName("usage")]
+        public Usage? Usage { get; set; }
+    }
+
+    private sealed class Usage
+    {
+        [JsonPropertyName("prompt_tokens")]
+        public int PromptTokens { get; set; }
+
+        [JsonPropertyName("completion_tokens")]
+        public int CompletionTokens { get; set; }
+
+        [JsonPropertyName("total_tokens")]
+        public int TotalTokens { get; set; }
     }
 
     private sealed class Choice

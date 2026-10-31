@@ -41,20 +41,49 @@ public class PromptOptimizationService : IPromptOptimizationService
         var result = await _openAIService.GetOptimizedPromptAsync(
             systemPrompt, request.Prompt, cancellationToken);
 
+        // Guarantee the optimized prompt never uses more tokens than the original.
+        var optimizedPrompt = PromptCompressor.EnsureNotLarger(request.Prompt, result.OptimizedPrompt);
+
         var response = new OptimizePromptResponse
         {
             OriginalPrompt = request.Prompt,
-            OptimizedPrompt = result.OptimizedPrompt,
+            OptimizedPrompt = optimizedPrompt,
             Improvements = result.Improvements,
             OptimizationType = request.OptimizationType.ToString(),
-            QualityScore = PromptAnalyzer.ScoreQuality(result.OptimizedPrompt),
+            QualityScore = PromptAnalyzer.ScoreQuality(optimizedPrompt),
             OriginalTokenEstimate = PromptAnalyzer.EstimateTokens(request.Prompt),
-            OptimizedTokenEstimate = PromptAnalyzer.EstimateTokens(result.OptimizedPrompt)
+            OptimizedTokenEstimate = PromptAnalyzer.EstimateTokens(optimizedPrompt)
         };
+
+        ApplyTokenUsage(response, result, systemPrompt, request.Prompt, optimizedPrompt);
 
         await PersistAsync(request, response, userId, cancellationToken);
 
         return response;
+    }
+
+    private static void ApplyTokenUsage(
+        OptimizePromptResponse response,
+        PromptOptimizationResult result,
+        string systemPrompt,
+        string userPrompt,
+        string optimizedPrompt)
+    {
+        if (result.Usage is { } usage)
+        {
+            response.PromptTokens = usage.PromptTokens;
+            response.CompletionTokens = usage.CompletionTokens;
+            response.TotalTokens = usage.TotalTokens;
+            response.TokenUsageSource = "Api";
+            return;
+        }
+
+        // Offline / no provider usage: approximate what the call would have consumed.
+        response.PromptTokens = PromptAnalyzer.EstimateTokens(systemPrompt)
+                                + PromptAnalyzer.EstimateTokens(userPrompt);
+        response.CompletionTokens = PromptAnalyzer.EstimateTokens(optimizedPrompt);
+        response.TotalTokens = response.PromptTokens + response.CompletionTokens;
+        response.TokenUsageSource = "Estimated";
     }
 
     private async Task PersistAsync(

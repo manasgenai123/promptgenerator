@@ -1,0 +1,125 @@
+<mat-card class="compare" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Compare Prompts</mat-card-title>
+    <mat-card-subtitle>
+      Paste your original and optimized prompts to see token differences and optimization guidance.
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="compare__inputs">
+      <mat-form-field appearance="outline" class="compare__field">
+        <mat-label>Original Prompt</mat-label>
+        <textarea
+          matInput
+          rows="10"
+          [maxlength]="maxLength"
+          [ngModel]="original()"
+          (ngModelChange)="setOriginal($event)"
+          placeholder="Paste the original, un-optimized prompt…"
+        ></textarea>
+        <mat-hint align="end">
+          {{ originalStats().tokens }} tokens · {{ originalStats().words }} words
+        </mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="compare__field">
+        <mat-label>Optimized Prompt</mat-label>
+        <textarea
+          matInput
+          rows="10"
+          [maxlength]="maxLength"
+          [ngModel]="optimized()"
+          (ngModelChange)="setOptimized($event)"
+          placeholder="Paste the optimized prompt…"
+        ></textarea>
+        <mat-hint align="end">
+          {{ optimizedStats().tokens }} tokens · {{ optimizedStats().words }} words
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="compare__actions">
+      <button mat-flat-button color="primary" type="button" [disabled]="!canCompare()" (click)="compare()">
+        <mat-icon>compare_arrows</mat-icon>
+        Compare
+      </button>
+      <button mat-stroked-button type="button" (click)="clear()">
+        <mat-icon>clear</mat-icon>
+        Clear
+      </button>
+    </div>
+
+    @if (compared()) {
+      <section class="compare__results">
+        <div class="compare__summary" [class.compare__summary--leaner]="isLeaner()" [class.compare__summary--heavier]="tokenDelta() > 0">
+          <mat-icon>{{ isLeaner() ? 'trending_down' : tokenDelta() > 0 ? 'trending_up' : 'balance' }}</mat-icon>
+          <div class="compare__summary-text">
+            @if (isLeaner()) {
+              <strong>{{ tokensSaved() }} tokens saved</strong>
+              <span>{{ savedPercent() }}% leaner than the original</span>
+            } @else if (tokenDelta() > 0) {
+              <strong>{{ tokenDelta() }} more tokens</strong>
+              <span>{{ -savedPercent() }}% heavier than the original</span>
+            } @else {
+              <strong>No token difference</strong>
+              <span>Both prompts use the same number of tokens</span>
+            }
+          </div>
+        </div>
+
+        <table class="compare__table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Original</th>
+              <th>Optimized</th>
+              <th>Change</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tokens (est.)</td>
+              <td>{{ originalStats().tokens }}</td>
+              <td>{{ optimizedStats().tokens }}</td>
+              <td [class.delta--down]="tokenDelta() < 0" [class.delta--up]="tokenDelta() > 0">
+                {{ tokenDelta() > 0 ? '+' : '' }}{{ tokenDelta() }}
+              </td>
+            </tr>
+            <tr>
+              <td>Words</td>
+              <td>{{ originalStats().words }}</td>
+              <td>{{ optimizedStats().words }}</td>
+              <td>
+                {{ optimizedStats().words - originalStats().words > 0 ? '+' : '' }}{{ optimizedStats().words - originalStats().words }}
+              </td>
+            </tr>
+            <tr>
+              <td>Characters</td>
+              <td>{{ originalStats().chars }}</td>
+              <td>{{ optimizedStats().chars }}</td>
+              <td>
+                {{ optimizedStats().chars - originalStats().chars > 0 ? '+' : '' }}{{ optimizedStats().chars - originalStats().chars }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <section class="compare__guidance">
+          <h3>
+            <mat-icon>tips_and_updates</mat-icon>
+            Token Optimization Guidance
+          </h3>
+          <ul class="guidance-list">
+            @for (item of guidance(); track item.message) {
+              <li class="guidance-item" [class]="'guidance-item--' + item.tone">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                <span>{{ item.message }}</span>
+              </li>
+            }
+          </ul>
+        </section>
+      </section>
+    }
+  </mat-card-content>
+</mat-card>

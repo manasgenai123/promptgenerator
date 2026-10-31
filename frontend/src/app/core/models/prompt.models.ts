@@ -32,6 +32,10 @@ export interface OptimizePromptResponse {
   qualityScore: number;
   originalTokenEstimate: number;
   optimizedTokenEstimate: number;
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+  tokenUsageSource: string;
   optimizationType: string;
 }
 

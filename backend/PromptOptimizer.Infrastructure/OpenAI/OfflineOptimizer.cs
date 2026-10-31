@@ -1,59 +1,45 @@
-using System.Text;
-using System.Text.RegularExpressions;
+using PromptOptimizer.Application.Common;
 using PromptOptimizer.Application.DTOs;
 
 namespace PromptOptimizer.Infrastructure.OpenAI;
 
 /// <summary>
 /// Deterministic, offline prompt optimizer used when no LLM API key is
-/// configured. It performs light clean-up and adds structure so the end-to-end
-/// application works without external credentials.
+/// configured. It compresses the prompt — removing filler, redundancy and
+/// verbose phrasing — so the optimized result always uses no more tokens than
+/// the original.
 /// </summary>
 internal static class OfflineOptimizer
 {
     public static PromptOptimizationResult Optimize(string original)
     {
+        var compressed = PromptCompressor.Compress(original);
+
+        // Never emit a larger prompt than the input.
+        var optimized = PromptCompressor.EnsureNotLarger(original, compressed);
+
+        var originalTokens = PromptAnalyzer.EstimateTokens(original);
+        var optimizedTokens = PromptAnalyzer.EstimateTokens(optimized);
+        var saved = originalTokens - optimizedTokens;
+
         var improvements = new List<string>();
 
-        // Collapse excessive whitespace and blank lines.
-        var cleaned = Regex.Replace(original.Trim(), @"[ \t]+", " ");
-        cleaned = Regex.Replace(cleaned, @"\n{3,}", "\n\n");
-        if (cleaned.Length < original.Trim().Length)
+        if (saved > 0)
         {
-            improvements.Add("Removed redundant whitespace and tightened wording.");
+            improvements.Add($"Reduced estimated tokens from ~{originalTokens} to ~{optimizedTokens} (saved ~{saved}).");
+        }
+        else
+        {
+            improvements.Add("Prompt was already concise; preserved token usage.");
         }
 
-        improvements.Add("Improved grammar and readability.");
-
-        var builder = new StringBuilder();
-        builder.AppendLine("## Objective");
-        builder.AppendLine(FirstSentenceAsObjective(cleaned));
-        builder.AppendLine();
-        builder.AppendLine("## Context");
-        builder.AppendLine(cleaned);
-        builder.AppendLine();
-        builder.AppendLine("## Requirements");
-        builder.AppendLine("- Preserve the original intent.");
-        builder.AppendLine("- Be concise and unambiguous.");
-        builder.AppendLine();
-        builder.AppendLine("## Expected Output Format");
-        builder.AppendLine("- Provide a clear, well-structured response.");
-
-        improvements.Add("Added clear structure with Objective, Context, Requirements and Output Format sections.");
-        improvements.Add("Specified an expected output format to guide the AI model.");
+        improvements.Add("Removed filler and politeness words that add tokens without meaning.");
+        improvements.Add("Tightened verbose phrasing and collapsed redundant whitespace.");
 
         return new PromptOptimizationResult
         {
-            OptimizedPrompt = builder.ToString().TrimEnd(),
+            OptimizedPrompt = optimized,
             Improvements = improvements
         };
-    }
-
-    private static string FirstSentenceAsObjective(string text)
-    {
-        var match = Regex.Match(text, @"^.*?[.!?]");
-        var sentence = match.Success ? match.Value : text;
-        sentence = sentence.Trim();
-        return string.IsNullOrEmpty(sentence) ? "Clarify and accomplish the user's request." : sentence;
     }
 }

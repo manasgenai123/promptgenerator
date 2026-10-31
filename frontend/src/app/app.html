@@ -1,16 +1,37 @@
 <app-navbar></app-navbar>
 
-<main class="layout">
-  <section class="layout__main">
-    <app-prompt-input [loading]="loading()" (optimize)="optimize($event)"></app-prompt-input>
+<div class="view-switch">
+  <mat-button-toggle-group [value]="view()" (change)="setView($event.value)" aria-label="Select view">
+    <mat-button-toggle value="optimize">
+      <mat-icon>auto_fix_high</mat-icon>
+      Optimize
+    </mat-button-toggle>
+    <mat-button-toggle value="compare">
+      <mat-icon>compare_arrows</mat-icon>
+      Compare
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
 
-    @if (result(); as r) {
-      <app-prompt-result [result]="r"></app-prompt-result>
-    }
-  </section>
+@if (view() === 'optimize') {
+  <main class="layout">
+    <section class="layout__main">
+      <app-prompt-input [loading]="loading()" (optimize)="optimize($event)"></app-prompt-input>
 
-  <aside class="layout__side">
-    <app-dashboard></app-dashboard>
-    <app-prompt-history (select)="showHistoryItem($event)"></app-prompt-history>
-  </aside>
-</main>
+      @if (result(); as r) {
+        <app-prompt-result [result]="r"></app-prompt-result>
+      }
+    </section>
+
+    <aside class="layout__side">
+      <app-dashboard></app-dashboard>
+      <app-prompt-history (select)="showHistoryItem($event)"></app-prompt-history>
+    </aside>
+  </main>
+} @else {
+  <main class="layout layout--single">
+    <section class="layout__main">
+      <app-prompt-compare></app-prompt-compare>
+    </section>
+  </main>
+}

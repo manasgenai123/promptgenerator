@@ -4,19 +4,33 @@ import { Navbar } from './shared/navbar/navbar';
 import { PromptInput } from './shared/prompt-input/prompt-input';
 import { PromptResult } from './shared/prompt-result/prompt-result';
 import { PromptHistory } from './shared/prompt-history/prompt-history';
+import { PromptCompare } from './shared/prompt-compare/prompt-compare';
 import { Dashboard } from './shared/dashboard/dashboard';
 import { PromptService } from './core/services/prompt.service';
 import { HistoryService } from './core/services/history.service';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
 import {
   HistoryItem,
   OptimizePromptRequest,
   OptimizePromptResponse,
 } from './core/models/prompt.models';
 
+type AppView = 'optimize' | 'compare';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [Navbar, PromptInput, PromptResult, PromptHistory, Dashboard],
+  imports: [
+    Navbar,
+    PromptInput,
+    PromptResult,
+    PromptHistory,
+    PromptCompare,
+    Dashboard,
+    MatButtonToggleModule,
+    MatIconModule,
+  ],
   styleUrl: './app.scss',
   templateUrl: './app.html',
 })
@@ -27,6 +41,11 @@ export class App {
 
   protected readonly loading = signal(false);
   protected readonly result = signal<OptimizePromptResponse | null>(null);
+  protected readonly view = signal<AppView>('optimize');
+
+  setView(view: AppView): void {
+    this.view.set(view);
+  }
 
   optimize(request: OptimizePromptRequest): void {
     this.loading.set(true);

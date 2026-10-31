@@ -11,10 +11,26 @@
     grid-template-columns: 1fr;
   }
 
+  &--single {
+    grid-template-columns: 1fr;
+  }
+
   &__main,
   &__side {
     display: flex;
     flex-direction: column;
     gap: 20px;
+  }
+}
+
+.view-switch {
+  max-width: 1280px;
+  margin: 20px auto 0;
+  padding: 0 16px;
+  display: flex;
+  justify-content: center;
+
+  mat-icon {
+    margin-right: 6px;
   }
 }

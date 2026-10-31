@@ -1,0 +1,157 @@
+.compare {
+  &__inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 8px 0 12px;
+
+    @media (max-width: 760px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__field {
+    width: 100%;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  &__results {
+    margin-top: 20px;
+  }
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.12));
+    background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.02));
+    margin-bottom: 18px;
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+
+    &--leaner {
+      border-color: #4caf50;
+      color: #2e7d32;
+    }
+
+    &--heavier {
+      border-color: #ef6c00;
+      color: #ef6c00;
+    }
+  }
+
+  &__summary-text {
+    display: flex;
+    flex-direction: column;
+
+    strong {
+      font-size: 1.1rem;
+    }
+
+    span {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 22px;
+    font-size: 0.9rem;
+
+    th,
+    td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.12));
+    }
+
+    th {
+      font-weight: 600;
+      opacity: 0.8;
+    }
+
+    td:not(:first-child),
+    th:not(:first-child) {
+      text-align: right;
+    }
+
+    .delta--down {
+      color: #2e7d32;
+      font-weight: 600;
+    }
+
+    .delta--up {
+      color: #ef6c00;
+      font-weight: 600;
+    }
+  }
+
+  &__guidance {
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+  }
+}
+
+.guidance-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.guidance-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border-left: 4px solid transparent;
+  background: var(--mat-sys-surface-container, rgba(0, 0, 0, 0.03));
+  line-height: 1.45;
+
+  mat-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &--positive {
+    border-left-color: #4caf50;
+    mat-icon {
+      color: #4caf50;
+    }
+  }
+
+  &--warning {
+    border-left-color: #ef6c00;
+    mat-icon {
+      color: #ef6c00;
+    }
+  }
+
+  &--info {
+    border-left-color: #3f51b5;
+    mat-icon {
+      color: #3f51b5;
+    }
+  }
+}

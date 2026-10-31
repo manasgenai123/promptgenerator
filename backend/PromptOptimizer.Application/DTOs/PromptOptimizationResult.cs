@@ -8,4 +8,7 @@ public class PromptOptimizationResult
     public string OptimizedPrompt { get; set; } = string.Empty;
 
     public IReadOnlyList<string> Improvements { get; set; } = new List<string>();
+
+    /// <summary>Actual token usage reported by the provider; null when running offline.</summary>
+    public TokenUsage? Usage { get; set; }
 }

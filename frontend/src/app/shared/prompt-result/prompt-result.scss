@@ -24,6 +24,61 @@
       margin-bottom: 10px;
     }
   }
+
+  &__usage {
+    margin: 4px 0 20px;
+    padding: 14px 16px;
+    border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.12));
+    border-radius: 10px;
+    background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.02));
+  }
+
+  &__usage-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+
+    h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      flex: 1;
+    }
+  }
+
+  &__usage-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+
+    @media (max-width: 520px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.usage-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container, rgba(0, 0, 0, 0.04));
+
+  &--total {
+    border: 1px solid var(--mat-sys-primary, #3f51b5);
+  }
+
+  &__value {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  &__label {
+    font-size: 0.78rem;
+    opacity: 0.75;
+  }
 }
 
 .metric {

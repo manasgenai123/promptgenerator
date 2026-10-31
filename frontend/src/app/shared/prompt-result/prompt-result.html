@@ -25,9 +25,37 @@
 
       <div class="metric metric--inline" [class.metric--positive]="tokensSaved() > 0">
         <mat-icon>savings</mat-icon>
-        <span>{{ tokensSaved() }} tokens saved</span>
+        <span>{{ tokensSaved() }} tokens saved ({{ tokensSavedPercent() }}%)</span>
       </div>
     </div>
+
+    <section class="result__usage">
+      <header class="result__usage-header">
+        <mat-icon>memory</mat-icon>
+        <h3>Internal Token Usage</h3>
+        <mat-chip-set>
+          <mat-chip [matTooltip]="usageIsActual()
+            ? 'Reported by the AI provider for this optimization'
+            : 'Heuristic estimate (no API key configured)'">
+            {{ usageIsActual() ? 'Actual (API)' : 'Estimated' }}
+          </mat-chip>
+        </mat-chip-set>
+      </header>
+      <div class="result__usage-grid">
+        <div class="usage-cell">
+          <span class="usage-cell__value">{{ result().promptTokens }}</span>
+          <span class="usage-cell__label">Input tokens</span>
+        </div>
+        <div class="usage-cell">
+          <span class="usage-cell__value">{{ result().completionTokens }}</span>
+          <span class="usage-cell__label">Output tokens</span>
+        </div>
+        <div class="usage-cell usage-cell--total">
+          <span class="usage-cell__value">{{ result().totalTokens }}</span>
+          <span class="usage-cell__label">Total used</span>
+        </div>
+      </div>
+    </section>
 
     <div class="result__columns">
       <section class="panel">
